@@ -1,40 +1,31 @@
-/**
- * jQuery Unveil
- * A very lightweight jQuery plugin to lazy load images
- * http://luis-almeida.github.com/unveil
- *
- * Licensed under the MIT license.
- * Copyright 2013 Luís Almeida
- * https://github.com/luis-almeida
- */
+// Unveil.js
+// Copyright 2013 Luís Almeida
+// Licensed under the MIT license
+// luis-almeida.github.com/unveil
 
 ;(function($) {
 
   $.fn.unveil = function(threshold) {
 
-    var $w = $(window),
-        th = threshold || 0,
+    var th = threshold || 0,
         retina = window.devicePixelRatio > 1,
-        attrib = retina? "data-src-retina" : "data-src",
-        images = this,
-        loaded,
-        inview,
-        source;
+        images = this;
 
-    this.one("unveil", function() {
-      source = this.getAttribute(attrib);
-      source = source || this.getAttribute("data-src");
-      if (source) this.setAttribute("src", source);
+    images.one("unveil", function() {
+      var src = retina ? this.getAttribute("data-src-retina") : null;
+      src = src || this.getAttribute("data-src");
+      if (src) this.setAttribute("src", src);
     });
 
     function unveil() {
-      inview = images.filter(function() {
-        var $e = $(this),
-            wt = $w.scrollTop(),
-            wb = wt + $w.height(),
-            et = $e.offset().top,
-            eb = et + $e.height();
+      var inview, loaded;
 
+      inview = images.filter(function() {
+        var el = this,
+            wt = window.pageYOffset,
+            wb = wt + document.documentElement.clientHeight,
+            et = el.offsetTop,
+            eb = et + el.height;
         return eb >= wt - th && et <= wb + th;
       });
 
@@ -42,8 +33,7 @@
       images = images.not(loaded);
     }
 
-    $w.scroll(unveil);
-    $w.resize(unveil);
+    $(window).on("scroll resize", unveil);
 
     unveil();
 
@@ -52,5 +42,3 @@
   };
 
 })(jQuery);
-
-
