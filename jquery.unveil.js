@@ -41,6 +41,8 @@
       loaded = inview.trigger("unveil");
       images = images.not(loaded);
     }
+    
+    this.setAttribute("src", this.getAttribute("data-loading-src"));
 
     $w.scroll(unveil);
     $w.resize(unveil);
